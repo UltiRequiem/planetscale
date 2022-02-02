@@ -219,10 +219,10 @@ nanoid@^3.2.0:
   resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.2.0.tgz#62667522da6673971cca916a6d3eff3f415ff80c"
   integrity sha512-fmsZYa9lpn69Ad5eDn7FMcnnSR+8R34W9qJEijxYhTbfOWzr22n1QxCMzXLK+ODyW2973V3Fux959iQoUxzUIA==
 
-planetscale@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/planetscale/-/planetscale-1.1.0.tgz#e0baa19f88a9646a103d8f547637dc744ee8a7e9"
-  integrity sha512-d2GQu/BjskXZg6a8+Z8cf9fbuhUwrsYLxiqZca23sBgivHZI1FBrhT0e2JBUA58HIphXmi8rZLjwT4Pj7tmrTA==
+planetscale@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/planetscale/-/planetscale-1.2.0.tgz#073d0424737a41a1698e8b8ab74a029d850569e6"
+  integrity sha512-oPkjebm25QanOKdmGOLddcY4nyM9AU8Nmbqybdr+anJdVxUgkyhFGp9XgIz5pmtqhTN0gWAshWO4d3vsF3ZWEA==
   dependencies:
     "@peculiar/x509" "^1.6.1"
     mysql2 "^2.3.3"
