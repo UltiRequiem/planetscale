@@ -36,19 +36,19 @@ export default class PlanetScale {
     this.connectionOptions = connectionOptions;
   }
 
-  async query(data, params) {
+  async #checkConnection() {
     if (!this.#connection) {
       this.#connection = await this.#createConnection();
     }
+  }
 
+  async query(data, params) {
+    await this.#checkConnection();
     return this.#connection.promise().query(data, params);
   }
 
   async execute(sql, values) {
-    if (!this.#connection) {
-      this.#connection = await this.#createConnection();
-    }
-
+    await this.#checkConnection();
     return this.#connection.promise().execute(sql, values);
   }
 

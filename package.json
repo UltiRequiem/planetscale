@@ -1,10 +1,24 @@
 {
   "name": "planetscale",
   "description": "A simple client for connecting to PlanetScale.",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "main": "index.js",
   "license": "MIT",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/UltiRequiem/planetscale.git"
+  },
+  "keywords": [
+    "planetscale",
+    "mysql",
+    "databases"
+  ],
+  "author": "Eliaz Bobadilla <eliaz.bobadilladev@gmail.com> (https://github.com/UltiRequiem)",
+  "bugs": {
+    "url": "https://github.com/UltiRequiem/planetscale/issues"
+  },
+  "homepage": "https://github.com/UltiRequiem/planetscale#readme",
   "dependencies": {
     "@peculiar/x509": "^1.6.1",
     "mysql2": "^2.3.3",
