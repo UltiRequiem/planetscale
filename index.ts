@@ -9,18 +9,34 @@ import {
 } from "@peculiar/x509";
 import { createConnection } from "mysql2";
 
-cryptoProvider.set(webcrypto);
+import type { IncomingMessage } from "node:http";
+import type { Connection, ConnectionOptions } from "mysql2";
+
+interface WebCrypto {
+  readonly subtle: SubtleCrypto;
+  getRandomValues<T extends ArrayBufferView | null>(array: T): T;
+}
+
+const crypto = webcrypto as unknown as WebCrypto;
+
+cryptoProvider.set(crypto);
 
 const nanoid = customAlphabet("0123456789abcdefghijklmnopqrstuvwxyz", 12);
 
-const nodeBtoa = (str) => Buffer.from(str, "binary").toString("base64");
+const nodeBtoa = (str: string) => Buffer.from(str, "binary").toString("base64");
 
 const base64encode = typeof btoa !== "undefined" ? btoa : nodeBtoa;
 
 export default class PlanetScale {
-  #baseURL;
-  #headers;
-  #connection;
+  readonly branch: string;
+  readonly tokenName: string;
+  readonly token: string;
+  readonly connectionOptions: ConnectionOptions;
+  readonly org: string;
+  readonly db: string;
+  #baseURL: string;
+  #headers: { Authorization: string };
+  #connection: Connection;
 
   constructor(
     { branch = "main", tokenName, token, org, db },
@@ -42,12 +58,12 @@ export default class PlanetScale {
     }
   }
 
-  async query(data, params) {
+  async query(data: any, params: any) {
     await this.#checkConnection();
     return this.#connection.promise().query(data, params);
   }
 
-  async execute(sql, values) {
+  async execute(sql: any, values: any) {
     await this.#checkConnection();
     return this.#connection.promise().execute(sql, values);
   }
@@ -59,7 +75,7 @@ export default class PlanetScale {
       hash: "SHA-256",
     };
 
-    const keyPair = await webcrypto.subtle.generateKey(alg, true, [
+    const keyPair = await crypto.subtle.generateKey(alg, true, [
       "sign",
       "verify",
     ]);
@@ -81,10 +97,20 @@ export default class PlanetScale {
 
     const displayName = `pscale-${nanoid()}`;
 
-    const { response, body } = await postJSON(fullURL, this.#headers, {
-      csr: csr.toString(),
-      display_name: displayName,
-    });
+    type CertData = {
+      id: string;
+      certificate: string;
+      database_branch: { access_host_url: string };
+    };
+
+    const { response, body } = await postJSON<CertData>(
+      fullURL,
+      this.#headers,
+      {
+        csr: csr.toString(),
+        display_name: displayName,
+      }
+    );
 
     const status = response.statusCode || 0;
 
@@ -94,7 +120,7 @@ export default class PlanetScale {
 
     const addr = body.database_branch.access_host_url;
 
-    const exportPrivateKey = await webcrypto.subtle.exportKey(
+    const exportPrivateKey = await crypto.subtle.exportKey(
       "pkcs8",
       keyPair.privateKey
     );
@@ -122,7 +148,11 @@ export default class PlanetScale {
   }
 }
 
-function postJSON(url, headers, body) {
+function postJSON<T>(
+  url: URL,
+  headers: Record<string, string>,
+  body: any
+): Promise<{ response: IncomingMessage; body: T }> {
   const json = JSON.stringify(body);
 
   const options = {

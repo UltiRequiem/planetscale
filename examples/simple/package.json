@@ -6,6 +6,6 @@
   "type": "module",
   "dependencies": {
     "dotenv": "^15.0.0",
-    "planetscale": "^1.0.0"
+    "planetscale": "^1.1.0"
   }
 }
