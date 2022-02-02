@@ -39,11 +39,9 @@ npm install planetscale # yarn add planetscale
 
 ```js
 import PlanetScale from "planetscale";
-import dotenv from "dotenv";
-
 import { env } from "node:process";
 
-dotenv.config();
+import "dotenv/config";
 
 const { db, tokenName, org, token } = env;
 
