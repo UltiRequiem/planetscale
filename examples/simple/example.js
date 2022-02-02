@@ -1,4 +1,4 @@
-import PlanetScale from "planetscale";
+import PlanetScale from "../../dist/index.js";
 import dotenv from "dotenv";
 
 import { env } from "node:process";

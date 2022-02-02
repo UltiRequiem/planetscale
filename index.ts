@@ -17,6 +17,12 @@ interface WebCrypto {
   getRandomValues<T extends ArrayBufferView | null>(array: T): T;
 }
 
+interface CertData {
+  id: string;
+  certificate: string;
+  database_branch: { access_host_url: string };
+}
+
 const crypto = webcrypto as unknown as WebCrypto;
 
 cryptoProvider.set(crypto);
@@ -28,18 +34,18 @@ const nodeBtoa = (str: string) => Buffer.from(str, "binary").toString("base64");
 const base64encode = typeof btoa !== "undefined" ? btoa : nodeBtoa;
 
 export default class PlanetScale {
-  readonly branch: string;
+  readonly branch?: string;
   readonly tokenName: string;
   readonly token: string;
-  readonly connectionOptions: ConnectionOptions;
   readonly org: string;
   readonly db: string;
+  readonly connectionOptions?: ConnectionOptions;
   #baseURL: string;
   #headers: { Authorization: string };
-  #connection: Connection;
+  #connection: Connection | null = null;
 
   constructor(
-    { branch = "main", tokenName, token, org, db },
+    { branch = "main", tokenName, token, org, db }: Record<string, string>,
     connectionOptions = {}
   ) {
     this.branch = branch;
@@ -52,19 +58,19 @@ export default class PlanetScale {
     this.connectionOptions = connectionOptions;
   }
 
-  async #checkConnection() {
+  async query(data: never, params: unknown) {
     if (!this.#connection) {
       this.#connection = await this.#createConnection();
     }
-  }
 
-  async query(data: any, params: any) {
-    await this.#checkConnection();
     return this.#connection.promise().query(data, params);
   }
 
-  async execute(sql: any, values: any) {
-    await this.#checkConnection();
+  async execute(sql: never, values: unknown) {
+    if (!this.#connection) {
+      this.#connection = await this.#createConnection();
+    }
+
     return this.#connection.promise().execute(sql, values);
   }
 
@@ -96,12 +102,6 @@ export default class PlanetScale {
     );
 
     const displayName = `pscale-${nanoid()}`;
-
-    type CertData = {
-      id: string;
-      certificate: string;
-      database_branch: { access_host_url: string };
-    };
 
     const { response, body } = await postJSON<CertData>(
       fullURL,
@@ -151,7 +151,7 @@ export default class PlanetScale {
 function postJSON<T>(
   url: URL,
   headers: Record<string, string>,
-  body: any
+  body: unknown
 ): Promise<{ response: IncomingMessage; body: T }> {
   const json = JSON.stringify(body);
 
