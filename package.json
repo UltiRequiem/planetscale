@@ -8,6 +8,9 @@
     "lint": "eslint index.ts",
     "build": "tsc"
   },
+  "files": [
+    "dist"
+  ],
   "type": "module",
   "license": "MIT",
   "repository": {
