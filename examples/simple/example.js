@@ -1,9 +1,6 @@
-import PlanetScale from "../../dist/index.js";
-import dotenv from "dotenv";
-
+import PlanetScale from "planetscale";
 import { env } from "node:process";
-
-dotenv.config();
+import "dotenv/config";
 
 const { db, tokenName, org, token } = env;
 
