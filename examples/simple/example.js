@@ -1,14 +1,3 @@
-# PlanetScale
-
-## Install
-
-```sh
-npm install planetscale # yarn add planetscale
-```
-
-## Usage
-
-```js
 import PlanetScale from "planetscale";
 import dotenv from "dotenv";
 
@@ -23,10 +12,3 @@ const connection = new PlanetScale({ db, tokenName, org, token });
 const [rows] = await connection.query("SELECT * FROM Persons");
 
 console.log(rows);
-```
-
-Check [examples/](./examples) for more.
-
-## Licence
-
-Released under the MIT Licence.

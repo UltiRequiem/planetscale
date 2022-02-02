@@ -1,0 +1,11 @@
+{
+  "name": "simple",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "dotenv": "^15.0.0",
+    "planetscale": "^1.0.0"
+  }
+}
