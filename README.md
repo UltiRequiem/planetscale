@@ -20,7 +20,8 @@ $ pscale service-token add-access tokenName connect_production_branch --database
   test       connect_production_branch
 ```
 
-If you plan to use [dotenv](https://github.com/motdotla/dotenv), you could writ a `.env` file like:
+If you plan to use [dotenv](https://github.com/motdotla/dotenv), you could
+write a `.env` file like:
 
 ```sh
 db=
@@ -38,19 +39,25 @@ npm install planetscale # yarn add planetscale
 ## Usage
 
 ```js
-import PlanetScale from "planetscale";
+import connect from "../../dist/index.js";
 import { env } from "node:process";
-
 import "dotenv/config";
 
 const { db, tokenName, org, token } = env;
 
-const connection = new PlanetScale({ db, tokenName, org, token });
+const connection = await connect({ db, tokenName, org, token });
 
-const [rows] = await connection.query("SELECT * FROM Persons");
+const [rows] = await connection.promise().query("SELECT * FROM Persons");
 
 console.log(rows);
+
+connection.end();
 ```
+
+The default export, `connect`, returns a
+[`Connection`](https://doc.deno.land/https://cdn.esm.sh/v64/mysql2@2.3.3/index.d.ts/~/Connection),
+it is basically a wrapper around `mysql2.createConnection`. Check the
+[docs](https://github.com/mysqljs/mysql) to know all the API.
 
 Check [examples/](./examples) for more.
 

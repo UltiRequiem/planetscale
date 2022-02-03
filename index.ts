@@ -33,7 +33,15 @@ const nodeBtoa = (str: string) => Buffer.from(str, "binary").toString("base64");
 
 const base64encode = typeof btoa !== "undefined" ? btoa : nodeBtoa;
 
-export default class PlanetScale {
+interface PlanetScaleConfig {
+  readonly branch: string;
+  readonly tokenName: string;
+  readonly token: string;
+  readonly org: string;
+  readonly db: string;
+}
+
+export class PlanetScale {
   readonly branch?: string;
   readonly tokenName: string;
   readonly token: string;
@@ -45,7 +53,7 @@ export default class PlanetScale {
   #connection: Connection | null = null;
 
   constructor(
-    { branch = "main", tokenName, token, org, db }: Record<string, string>,
+    { branch = "main", tokenName, token, org, db }: PlanetScaleConfig,
     connectionOptions = {}
   ) {
     this.branch = branch;
@@ -58,20 +66,12 @@ export default class PlanetScale {
     this.connectionOptions = connectionOptions;
   }
 
-  async query(data: never, params: unknown) {
+  async getConnection(): Promise<Connection> {
     if (!this.#connection) {
       this.#connection = await this.#createConnection();
     }
 
-    return this.#connection.promise().query(data, params);
-  }
-
-  async execute(sql: never, values: unknown) {
-    if (!this.#connection) {
-      this.#connection = await this.#createConnection();
-    }
-
-    return this.#connection.promise().execute(sql, values);
+    return this.#connection;
   }
 
   async #createConnection() {
@@ -188,3 +188,14 @@ function postJSON<T>(
     req.end();
   });
 }
+
+export default async function connect(
+  config: PlanetScaleConfig,
+  connectionOptions: ConnectionOptions = {}
+) {
+  const planetscale = new PlanetScale(config, connectionOptions);
+
+  return planetscale.getConnection();
+}
+
+export type { ConnectionOptions } from "mysql2";
