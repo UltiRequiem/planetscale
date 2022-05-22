@@ -1,8 +1,6 @@
 # PlanetScale
 
-> https://planetscale.com
-
-A simple client for connecting to PlanetScale
+A simple client for connecting to [PlanetScale](https://planetscale.com).
 
 ## Setup
 
@@ -20,8 +18,8 @@ $ pscale service-token add-access tokenName connect_production_branch --database
   test       connect_production_branch
 ```
 
-If you plan to use [dotenv](https://github.com/motdotla/dotenv), you could
-write a `.env` file like:
+If you plan to use [dotenv](https://github.com/motdotla/dotenv), you could write
+a `.env` file like:
 
 ```sh
 db=
@@ -39,7 +37,7 @@ npm install planetscale # yarn add planetscale
 ## Usage
 
 ```js
-import connect from "../../dist/index.js";
+import connect from "planetscale";
 import { env } from "node:process";
 import "dotenv/config";
 

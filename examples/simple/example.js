@@ -8,6 +8,6 @@ const connection = await connect({ db, tokenName, org, token });
 
 const [rows] = await connection.promise().query("SELECT * FROM Persons");
 
-console.log(rows)
+console.log(rows);
 
 connection.end();

@@ -7,10 +7,9 @@ import {
   cryptoProvider,
   Pkcs10CertificateRequestGenerator,
 } from "@peculiar/x509";
-import { createConnection } from "mysql2";
+import { Connection, ConnectionOptions, createConnection } from "mysql2";
 
-import type { IncomingMessage } from "node:http";
-import type { Connection, ConnectionOptions } from "mysql2";
+import { IncomingMessage } from "node:http";
 
 interface WebCrypto {
   readonly subtle: SubtleCrypto;
@@ -33,7 +32,7 @@ const nodeBtoa = (str: string) => Buffer.from(str, "binary").toString("base64");
 
 const base64encode = typeof btoa !== "undefined" ? btoa : nodeBtoa;
 
-interface PlanetScaleConfig {
+export interface PlanetScaleConfig {
   readonly branch: string;
   readonly tokenName: string;
   readonly token: string;
@@ -54,7 +53,7 @@ export class PlanetScale {
 
   constructor(
     { branch = "main", tokenName, token, org, db }: PlanetScaleConfig,
-    connectionOptions = {}
+    connectionOptions = {},
   ) {
     this.branch = branch;
     this.tokenName = tokenName;
@@ -96,9 +95,7 @@ export class PlanetScale {
     });
 
     const fullURL = new URL(
-      `${this.#baseURL}/v1/organizations/${this.org}/databases/${
-        this.db
-      }/branches/${this.branch}/certificates`
+      `${this.#baseURL}/v1/organizations/${this.org}/databases/${this.db}/branches/${this.branch}/certificates`,
     );
 
     const displayName = `pscale-${nanoid()}`;
@@ -109,7 +106,7 @@ export class PlanetScale {
       {
         csr: csr.toString(),
         display_name: displayName,
-      }
+      },
     );
 
     const status = response.statusCode || 0;
@@ -122,17 +119,18 @@ export class PlanetScale {
 
     const exportPrivateKey = await crypto.subtle.exportKey(
       "pkcs8",
-      keyPair.privateKey
+      keyPair.privateKey,
     );
 
     const exportedAsString = String.fromCharCode.apply(
       null,
-      Array.from(new Uint8Array(exportPrivateKey))
+      Array.from(new Uint8Array(exportPrivateKey)),
     );
 
     const exportedAsBase64 = base64encode(exportedAsString);
 
-    const pemExported = `-----BEGIN PRIVATE KEY-----\n${exportedAsBase64}\n-----END PRIVATE KEY-----`;
+    const pemExported =
+      `-----BEGIN PRIVATE KEY-----\n${exportedAsBase64}\n-----END PRIVATE KEY-----`;
 
     return createConnection({
       ...this.connectionOptions,
@@ -151,7 +149,7 @@ export class PlanetScale {
 function postJSON<T>(
   url: URL,
   headers: Record<string, string>,
-  body: unknown
+  body: unknown,
 ): Promise<{ response: IncomingMessage; body: T }> {
   const json = JSON.stringify(body);
 
@@ -191,7 +189,7 @@ function postJSON<T>(
 
 export default async function connect(
   config: PlanetScaleConfig,
-  connectionOptions: ConnectionOptions = {}
+  connectionOptions: ConnectionOptions = {},
 ) {
   const planetscale = new PlanetScale(config, connectionOptions);
 
