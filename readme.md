@@ -52,10 +52,10 @@ console.log(rows);
 connection.end();
 ```
 
-The default export, `connect`, returns a
-[`Connection`](https://doc.deno.land/https://cdn.esm.sh/v64/mysql2@2.3.3/index.d.ts/~/Connection),
-it is basically a wrapper around `mysql2.createConnection`. Check the
-[docs](https://github.com/mysqljs/mysql) to know all the API.
+The default export, `connect`, returns a `Connection`, it is basically a wrapper
+around `mysql2.createConnection`.
+
+Check the [docs](https://github.com/mysqljs/mysql) to know all the API.
 
 Check [examples/](./examples) for more.
 
